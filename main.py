@@ -5,20 +5,20 @@ if __name__ == "__main__":
     grafo = Grafo()
 
     # Adiciona vértices e arestas
-    grafo.adicionar_aresta('A', 'B')
-    grafo.adicionar_aresta('A', 'C')
-    grafo.adicionar_aresta('B', 'C')
-    grafo.adicionar_aresta('C', 'D')
+    grafo.adicionar_aresta('São Paulo', 'Rio de Janeiro')
+    grafo.adicionar_aresta('São Paulo', 'Belo horizonte')
+    grafo.adicionar_aresta('Rio de Janeiro', 'Belo horizonte')
+    grafo.adicionar_aresta('Belo horizonte', 'Brasília')
     
     print("Grafo inicial:")
     print(grafo)
     
     # Remove uma aresta
-    grafo.remover_aresta('A', 'B')
-    print("\nGrafo após remover aresta A-B:")
+    grafo.remover_aresta('São Paulo', 'Rio de Janeiro')
+    print("\nGrafo após remover aresta São Paulo-Rio de Janeiro:")
     print(grafo)
     
     # Remove um vértice
-    grafo.remover_vertice('C')
-    print("\nGrafo após remover vértice C:")
+    grafo.remover_vertice('Belo horizonte')
+    print("\nGrafo após remover vértice Belo horizonte:")
     print(grafo)

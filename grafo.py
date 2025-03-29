@@ -39,7 +39,7 @@ class Grafo:
         else:
             print("Um dos vértices não existe.")
 
-        # Armazenando sempre ordenado pra facilitar na hora de manipular e evitar duplicatas
+        # Armazenando sempre ordenado (alfabética ou numéricamente) pra facilitar na hora de manipular e evitar duplicatas
         aresta = (min(vertice1, vertice2), max(vertice1, vertice2))
         if aresta not in self.arestas:
             self.arestas.append(aresta)
