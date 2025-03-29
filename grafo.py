@@ -68,6 +68,18 @@ class Grafo:
         # Caso não encontre o vertice ele retorna o segundo argumento passado, uma lista vazia.
         # O .copy() cria uma snapshot.
         return self.adjacencia.get(vertice, []).copy()
+    
+    def encontrar_rotas_possiveis(self):
+        pass
+
+    def encontrar_menor_rota(self):
+        pass
+
+    def encontrar_maior_rota(self):
+        pass
+
+    def gerar_matriz_adjacencia(self):
+        pass
 
     def __str__(self):
         # Representando o grafo em string
