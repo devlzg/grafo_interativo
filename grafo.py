@@ -68,6 +68,26 @@ class Grafo:
         # Caso não encontre o vertice ele retorna o segundo argumento passado, uma lista vazia.
         # O .copy() cria uma snapshot.
         return self.adjacencia.get(vertice, []).copy()
+
+    def gerar_matriz_adjacencia(self):
+        vertices_ordenados = sorted(self.adjacencia.keys())
+        qtd_vertices = len(vertices_ordenados)
+
+        indice = {vertice: i for i, vertice in enumerate(vertices_ordenados)}
+
+        matriz_adjacencia = [[0] * qtd_vertices for _ in range(qtd_vertices)]
+
+        for vertice, vizinhos in self.adjacencia.items():
+            i = indice[vertice]
+            for vizinho in vizinhos:
+                j= indice[vizinho]
+                matriz_adjacencia[i][j] = 1
+    
+        for linha in matriz_adjacencia:
+            print(linha)
+        
+        return matriz_adjacencia
+        
     
     def encontrar_rotas_possiveis(self):
         pass
@@ -78,8 +98,6 @@ class Grafo:
     def encontrar_maior_rota(self):
         pass
 
-    def gerar_matriz_adjacencia(self):
-        pass
 
     def __str__(self):
         # Representando o grafo em string

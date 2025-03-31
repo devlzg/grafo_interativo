@@ -10,15 +10,19 @@ if __name__ == "__main__":
     grafo.adicionar_aresta('Rio de Janeiro', 'Belo horizonte')
     grafo.adicionar_aresta('Belo horizonte', 'Brasília')
     
-    print("Grafo inicial:")
-    print(grafo)
+    # print("Grafo inicial:")
+    # print(grafo)
+
+    grafo.gerar_matriz_adjacencia()
     
     # Remove uma aresta
     grafo.remover_aresta('São Paulo', 'Rio de Janeiro')
-    print("\nGrafo após remover aresta São Paulo-Rio de Janeiro:")
-    print(grafo)
+    # print("\nGrafo após remover aresta São Paulo-Rio de Janeiro:")
+    # print(grafo)
     
     # Remove um vértice
     grafo.remover_vertice('Belo horizonte')
-    print("\nGrafo após remover vértice Belo horizonte:")
-    print(grafo)
+    # print("\nGrafo após remover vértice Belo horizonte:")
+    # print(grafo)
+
+ 
