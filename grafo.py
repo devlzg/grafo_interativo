@@ -82,21 +82,10 @@ class Grafo:
             for vizinho in vizinhos:
                 j= indice[vizinho]
                 matriz_adjacencia[i][j] = 1
-    
-        for linha in matriz_adjacencia:
-            print(linha)
         
         return matriz_adjacencia
-        
-    
-    def encontrar_rotas_possiveis(self):
-        pass
+  
 
-    def encontrar_menor_rota(self):
-        pass
-
-    def encontrar_maior_rota(self):
-        pass
 
 
     def __str__(self):
