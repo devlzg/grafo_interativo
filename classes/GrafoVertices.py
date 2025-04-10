@@ -20,6 +20,7 @@ class GrafoVertices(QGraphicsEllipseItem):
         super().__init__(-raio, -raio, 2*raio, 2*raio) # (posição x, posição y, largura, altura)
 
         self.vertice_id = vertice_id
+        self.rotulo = vertice_id
         self.setPos(x, y)
         self.raio = raio
 
@@ -40,7 +41,7 @@ class GrafoVertices(QGraphicsEllipseItem):
         self.setAcceptHoverEvents(True)
 
         # Texto no centro do vértice
-        self.texto = QGraphicsTextItem(str(vertice_id), self)
+        self.texto = QGraphicsTextItem(str(self.rotulo), self)
         self.texto.setDefaultTextColor(Qt.GlobalColor.white)
         limite = self.texto.boundingRect()
         self.texto.setPos(-limite.width()/2, -limite.height()/2)
@@ -58,3 +59,9 @@ class GrafoVertices(QGraphicsEllipseItem):
 
         # Desenhar o vértice.
         painter.drawEllipse(self.rect())
+    
+    def alterar_rotulo(self, novo_rotulo):
+        self.rotulo = novo_rotulo
+        self.texto.setPlainText(str(self.rotulo))
+        limite = self.texto.boundingRect()
+        self.texto.setPos(-limite.width()/2, -limite.height()/2)

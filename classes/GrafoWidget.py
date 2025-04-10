@@ -3,9 +3,10 @@ from PyQt6.QtGui import QColor, QPainter
 from PyQt6.QtCore import QRectF, QTimer, Qt
 import random
 
-from .utilitarios import interpolar_cor, encontrar_rotas_possiveis, encontrar_menor_rota, encontrar_maior_rota
+from .utilitarios import *
 from classes import GrafoVertices
 from classes import GrafoArestas
+from PyQt6.QtWidgets import QInputDialog
 
 '''
 CLASSE DE WIDGETS
@@ -170,19 +171,29 @@ class GrafoWidget(QGraphicsView):
         print(f"Novo vértice criado: {novo_vertice.vertice_id}")  # Debug
 
         super().mousePressEvent(event)
-    
+
+    def menu_alterar_rotulo(self, vertice):
+        novo_rotulo, ok = QInputDialog.getText(self, "Renomear Nó", "Digite o novo rótulo:")
+        if ok and novo_rotulo:
+            vertice.alterar_rotulo(novo_rotulo)
+            vertice.update()
+
     def menu_contexto_vertice(self, vertice, pos):
         """Exibe o menu de contexto para vertices."""
         menu_contexto_vertice = QMenu()
-        acao_remover = menu_contexto_vertice.addAction("Remover nó")
-        acao_fixar = menu_contexto_vertice.addAction("Fixar nó")
-        acao_desconectar = menu_contexto_vertice.addAction("Desconectar nó")
+        acao_renomear_vertice = menu_contexto_vertice.addAction("Renomear nó")
+        acao_adicionar_aresta = menu_contexto_vertice.addAction("Adicionar aresta")
+        acao_remover_arestas = menu_contexto_vertice.addAction("Remover arestas")
+        acao_remover_vertice = menu_contexto_vertice.addAction("Remover nó")
 
-        acao_remover.triggered.connect(lambda: print("Ainda não implementado"))
-        acao_fixar.triggered.connect(lambda: print("Ainda não implementado"))
-        acao_desconectar.triggered.connect(lambda: print("Ainda não implementado"))
+        acao_renomear_vertice.triggered.connect(lambda: self.menu_alterar_rotulo(vertice))
+        acao_adicionar_aresta.triggered.connect(lambda: print("Ainda não implementado"))
+        acao_remover_arestas.triggered.connect(lambda: print("Ainda não implementado"))
+        acao_remover_vertice.triggered.connect(lambda: print("Ainda não implementado"))
 
         menu_contexto_vertice.exec(pos)
+    
+
 
     def menu_contexto_padrao(self, pos):
         """Exibe o menu de contexto padrão."""
@@ -192,7 +203,7 @@ class GrafoWidget(QGraphicsView):
         acao_gerar = menu.addAction("Gerar novo grafo")
 
         # Conecta as ações
-        acao_inserir.triggered.connect(lambda: self.adicionar_vertice())
+        acao_inserir.triggered.connect(lambda: self.adicionar_vertice(self.mapToScene(self.mapFromGlobal(pos)).x(), self.mapToScene(self.mapFromGlobal(pos)).y())) # passa a posição atual do mouse como parametro pra criar o vertice
         acao_resetar.triggered.connect(self.resetar_grafo)
         acao_gerar.triggered.connect(self.gerar_grafo)
 
@@ -252,21 +263,49 @@ class GrafoWidget(QGraphicsView):
     
     def desenhar_todas_rotas(self):
         adjacencia = self.criar_dicionario_adjacencia()
-        caminhos_possiveis = encontrar_rotas_possiveis(1, 4, adjacencia)
-        print(caminhos_possiveis)
-        return caminhos_possiveis
+        caminhos_possiveis = encontrar_rotas_possiveis(1, 6, adjacencia)
+        if not caminhos_possiveis:
+            print("Não existe caminho entre esses 2 nós")
+            return []
+        print("Ids dos vertices: ", caminhos_possiveis)
+        rotulos = []
+        rotulos_aux = []
+        for caminho in caminhos_possiveis:
+            for vertice in caminho:
+                rotulos_aux.append(self.vertices[vertice].rotulo)
+            rotulos.append(rotulos_aux)
+            rotulos_aux = []
+        print("Rotulos: ", rotulos)
+        return caminhos_possiveis, rotulos
 
     def desenhar_menor_rota(self):
         adjacencia = self.criar_dicionario_adjacencia()
-        caminhos_possiveis = encontrar_menor_rota(1, 4, adjacencia)
-        print(caminhos_possiveis)
-        return caminhos_possiveis
+        menor_caminho = encontrar_menor_rota(1, 6, adjacencia)
+        if not menor_caminho:
+            print("Não existe caminho entre esses 2 nós")
+            return []
+        rotulos = []
+        print(menor_caminho)
+        for vertice in menor_caminho:
+            rotulos.append(self.vertices[vertice].rotulo)
+        print("Menor caminho: ", menor_caminho)
+        print("Rotulos do menor caminho: ", rotulos)
+        return menor_caminho
     
     def desenhar_maior_rota(self):
 
         adjacencia = self.criar_dicionario_adjacencia()
-        caminhos_possiveis = encontrar_maior_rota(1, 4, adjacencia)
-        print(caminhos_possiveis)
-        return caminhos_possiveis
+        maior_caminho = encontrar_maior_rota(1, 6, adjacencia)
+        if not maior_caminho:
+            print("Não existe caminho entre esses 2 nós")
+            return []
+        rotulos = []
+        print(maior_caminho)
+        for vertice in maior_caminho:
+            rotulos.append(self.vertices[vertice].rotulo)
+        print("Maior caminho: ", maior_caminho)
+        print("Rotulos do maior caminho: ", rotulos)
+        
+        return maior_caminho
     
     

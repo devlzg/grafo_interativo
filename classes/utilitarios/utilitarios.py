@@ -16,8 +16,8 @@ def encontrar_rotas_possiveis(inicio, fim, grafo, caminho=[]):
         return []
     # Ou o vértice não existe, ou não se conecta em nenhum outro
 
-    caminhos_possiveis = []
     # Caso os dois if's acima sejam false, inicializa a lista de caminhos vazia
+    caminhos_possiveis = []
 
     for vertice in grafo[inicio]: # Itera em todos vizinhos do vértice inicial
         if vertice not in caminho: # Pra cada vértice adjacente, checa se já não tá no caminho, para evitar ciclos (então nenhum vértice repete na rota).
@@ -25,7 +25,8 @@ def encontrar_rotas_possiveis(inicio, fim, grafo, caminho=[]):
             novos_caminhos = encontrar_rotas_possiveis(vertice, fim, grafo, caminho)
             for novo_caminho in novos_caminhos:
                 # Caminhos encontrados são acumulados na lista de caminhos possíveis
-                caminhos_possiveis.append(novo_caminho)
+                if novo_caminho not in caminhos_possiveis:
+                    caminhos_possiveis.append(novo_caminho)
     # retorna todos caminhos encontrados
     return caminhos_possiveis
 
@@ -56,7 +57,7 @@ def encontrar_maior_rota(inicio, fim, grafo, caminho=[]):
     maior_caminho = None
     for vertice in grafo[inicio]:
         if vertice not in caminho:
-            novo_caminho = encontrar_menor_rota(vertice, fim, grafo, caminho)
+            novo_caminho = encontrar_maior_rota(vertice, fim, grafo, caminho)
             if novo_caminho: 
                 if not maior_caminho or len(novo_caminho) > len(maior_caminho): # Essa função toda eh a mesma que a de menor rota, só muda o "<" pra ">" nessa linha
                     maior_caminho = novo_caminho
