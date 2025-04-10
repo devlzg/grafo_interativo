@@ -34,6 +34,18 @@ class MainWindow(QMainWindow):
         botao_resetar.triggered.connect(lambda: self.grafoWidget.resetar_grafo())
         toolbar.addAction(botao_resetar)
 
+        botao_encontrar_todas_rotas = QAction('Encontrar rotas possíveis', self)
+        botao_encontrar_todas_rotas.triggered.connect(lambda: self.grafoWidget.desenhar_todas_rotas())
+        toolbar.addAction(botao_encontrar_todas_rotas)
+
+        botao_encontrar_menor_rota = QAction('Encontrar menor rota', self)
+        botao_encontrar_menor_rota.triggered.connect(lambda: self.grafoWidget.desenhar_menor_rota())
+        toolbar.addAction(botao_encontrar_menor_rota)
+        
+        botao_encontrar_maior_rota = QAction('Encontrar maior rota', self)
+        botao_encontrar_maior_rota.triggered.connect(lambda: self.grafoWidget.desenhar_maior_rota())
+        toolbar.addAction(botao_encontrar_maior_rota)
+
     def comecar_aresta(self):
         if self.grafoWidget.vertice_selecionado:
             self.grafoWidget.comeco_aresta = self.grafoWidget.vertice_selecionado

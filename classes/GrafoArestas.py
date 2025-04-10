@@ -39,3 +39,6 @@ class GrafoArestas(QGraphicsLineItem):
         pen = self.pen()
         pen.setColor(self.cor_atual)
         self.setPen(pen)
+
+    def get_vertices(self):
+        return [self.vertice1.vertice_id, self.vertice2.vertice_id]

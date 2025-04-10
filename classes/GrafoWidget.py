@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene
 from PyQt6.QtGui import QColor, QPainter
 from PyQt6.QtCore import QRectF, QTimer, Qt
 
-from .utilitarios import interpolar_cor
+from .utilitarios import interpolar_cor, encontrar_rotas_possiveis, encontrar_menor_rota, encontrar_maior_rota
 from classes import GrafoVertices
 from classes import GrafoArestas
 
@@ -164,3 +164,39 @@ class GrafoWidget(QGraphicsView):
             self.vertice_selecionado.fixo = False
 
         super().mouseReleaseEvent(event)
+
+    def criar_dicionario_adjacencia(self):
+        adjacencia = {}
+
+        for vertice_id in self.vertices.keys():
+            adjacencia[vertice_id] = []
+        
+        for aresta in self.arestas:
+            vertice1_id = aresta.vertice1.vertice_id
+            vertice2_id = aresta.vertice2.vertice_id
+
+            adjacencia[vertice1_id].append(vertice2_id)
+            adjacencia[vertice2_id].append(vertice1_id)
+    
+        return adjacencia
+    
+    def desenhar_todas_rotas(self):
+        adjacencia = self.criar_dicionario_adjacencia()
+        caminhos_possiveis = encontrar_rotas_possiveis(1, 4, adjacencia)
+        print(caminhos_possiveis)
+        return caminhos_possiveis
+
+    def desenhar_menor_rota(self):
+        adjacencia = self.criar_dicionario_adjacencia()
+        caminhos_possiveis = encontrar_menor_rota(1, 4, adjacencia)
+        print(caminhos_possiveis)
+        return caminhos_possiveis
+    
+    def desenhar_maior_rota(self):
+
+        adjacencia = self.criar_dicionario_adjacencia()
+        caminhos_possiveis = encontrar_maior_rota(1, 4, adjacencia)
+        print(caminhos_possiveis)
+        return caminhos_possiveis
+    
+    
