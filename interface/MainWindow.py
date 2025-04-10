@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMainWindow, QToolBar
+from PyQt6.QtWidgets import QMainWindow, QToolBar, QMenu
 from PyQt6.QtGui import QAction
 from classes import GrafoWidget
 
@@ -33,6 +33,10 @@ class MainWindow(QMainWindow):
         botao_resetar = QAction('Resetar', self)
         botao_resetar.triggered.connect(lambda: self.grafoWidget.resetar_grafo())
         toolbar.addAction(botao_resetar)
+
+        botao_gerar_grafo = QAction('Novo Grafo', self)
+        botao_gerar_grafo.triggered.connect(lambda: self.grafoWidget.gerar_grafo())
+        toolbar.addAction(botao_gerar_grafo)
 
         botao_encontrar_todas_rotas = QAction('Encontrar rotas possíveis', self)
         botao_encontrar_todas_rotas.triggered.connect(lambda: self.grafoWidget.desenhar_todas_rotas())

@@ -1,6 +1,7 @@
-from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene
+from PyQt6.QtWidgets import QGraphicsView, QGraphicsScene, QMenu
 from PyQt6.QtGui import QColor, QPainter
 from PyQt6.QtCore import QRectF, QTimer, Qt
+import random
 
 from .utilitarios import interpolar_cor, encontrar_rotas_possiveis, encontrar_menor_rota, encontrar_maior_rota
 from classes import GrafoVertices
@@ -93,11 +94,12 @@ class GrafoWidget(QGraphicsView):
         pass
 
     def atualizar_cores(self):
-        # Atualiza cores dos nós com interpolação
+        # Atualiza as cores dos vértices
         for vertice in self.vertices.values():
             alvo = self.cor_padrao
-            if self.vertice_hover is not None:
-                if vertice.vertice_id == self.vertice_hover.vertice_id or self.esta_diretamente_conectado(self.vertice_hover, vertice):
+            if self.vertice_hover is not None: # Verifica se o vértice com o cursor por cima está conectado com os outros
+                if (vertice == self.vertice_hover or
+                        self.esta_diretamente_conectado(self.vertice_hover, vertice)):
                     alvo = self.cor_selecionado
                 else:
                     alvo = self.cor_dessaturado
@@ -105,17 +107,30 @@ class GrafoWidget(QGraphicsView):
 
             vertice.update()
 
-        # Atualizar cores das arestas
+        # Atualiza as cores das arestas
         for aresta in self.arestas:
             alvo = self.cor_padrao
-            if self.vertice_hover is not None:
-                if aresta.vertice1.vertice_id == self.vertice_hover.vertice_id or aresta.vertice2.vertice_id == self.vertice_hover.vertice_id or self.esta_diretamente_conectado(self.vertice_hover, aresta.vertice1) or self.esta_diretamente_conectado(self.vertice_hover, aresta.vertice2):
+            if self.vertice_hover is not None: # Verifica apenas conexão direta com o vértice "hover" (com o cursor em cima)
+                if (aresta.vertice1 == self.vertice_hover or
+                        aresta.vertice2 == self.vertice_hover):
                     alvo = self.cor_selecionado
                 else:
                     alvo = self.cor_dessaturado
 
             aresta.cor_atual = interpolar_cor(aresta.cor_atual, alvo, self.fade_alpha)
             aresta.atualizar_cor()
+
+            # Atualizar cores das arestas
+            for aresta in self.arestas:
+                alvo = self.cor_padrao
+                if self.vertice_hover is not None:
+                    if aresta.vertice1.vertice_id == self.vertice_hover.vertice_id or aresta.vertice2.vertice_id == self.vertice_hover.vertice_id or self.esta_diretamente_conectado(self.vertice_hover, aresta.vertice1) or self.esta_diretamente_conectado(self.vertice_hover, aresta.vertice2):
+                        alvo = self.cor_selecionado
+                    else:
+                        alvo = self.cor_dessaturado
+
+                aresta.cor_atual = interpolar_cor(aresta.cor_atual, alvo, self.fade_alpha)
+                aresta.atualizar_cor()
 
     def esta_diretamente_conectado(self, vertice_a: GrafoVertices, vertice_b: GrafoVertices) -> bool:
         for aresta in self.arestas:
@@ -127,6 +142,17 @@ class GrafoWidget(QGraphicsView):
     def mousePressEvent(self, event):
         pos = self.mapToScene(event.pos())
         itens = self.scene.items(pos)
+
+        # Se o clique for do botão direito fora de um vertice, nao faz nada, só chama o menu de contexto padrao
+        # Se o clique for em um vertice chama o menu de contexto para vertices
+        if event.button() == Qt.MouseButton.RightButton:
+            for item in itens:
+                if isinstance(item, GrafoVertices):
+                    self.menu_contexto_vertice(item, event.globalPosition().toPoint())
+                    return
+            self.menu_contexto_padrao(event.globalPosition().toPoint())
+            return
+
 
         for item in itens:
             if isinstance(item, GrafoVertices):
@@ -144,6 +170,33 @@ class GrafoWidget(QGraphicsView):
         print(f"Novo vértice criado: {novo_vertice.vertice_id}")  # Debug
 
         super().mousePressEvent(event)
+    
+    def menu_contexto_vertice(self, vertice, pos):
+        """Exibe o menu de contexto para vertices."""
+        menu_contexto_vertice = QMenu()
+        acao_remover = menu_contexto_vertice.addAction("Remover nó")
+        acao_fixar = menu_contexto_vertice.addAction("Fixar nó")
+        acao_desconectar = menu_contexto_vertice.addAction("Desconectar nó")
+
+        acao_remover.triggered.connect(lambda: print("Ainda não implementado"))
+        acao_fixar.triggered.connect(lambda: print("Ainda não implementado"))
+        acao_desconectar.triggered.connect(lambda: print("Ainda não implementado"))
+
+        menu_contexto_vertice.exec(pos)
+
+    def menu_contexto_padrao(self, pos):
+        """Exibe o menu de contexto padrão."""
+        menu = QMenu()
+        acao_inserir = menu.addAction("Inserir nó")
+        acao_resetar = menu.addAction("Limpar grafo")
+        acao_gerar = menu.addAction("Gerar novo grafo")
+
+        # Conecta as ações
+        acao_inserir.triggered.connect(lambda: self.adicionar_vertice())
+        acao_resetar.triggered.connect(self.resetar_grafo)
+        acao_gerar.triggered.connect(self.gerar_grafo)
+
+        menu.exec(pos)
 
     def mouseMoveEvent(self, event):
         pos = self.mapToScene(event.pos())
@@ -164,6 +217,23 @@ class GrafoWidget(QGraphicsView):
             self.vertice_selecionado.fixo = False
 
         super().mouseReleaseEvent(event)
+    
+    def gerar_grafo(self):
+        if self.proximo_vertice_id == 1:
+            for i in range(6):
+                x = random.randint(0, 640)
+                y = random.randint(0, 360)
+                self.adicionar_vertice(x, y)
+
+            vertices = list(self.vertices.values())
+            conexoes = random.randint(6, 10)
+
+            for _ in range(conexoes):
+                vert1, vert2 = random.sample(vertices, 2) # 2 vértices aleatórios
+                self.adicionar_aresta(vert1, vert2)
+        else:
+            self.resetar_grafo()
+            self.gerar_grafo()
 
     def criar_dicionario_adjacencia(self):
         adjacencia = {}
