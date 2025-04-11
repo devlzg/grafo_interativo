@@ -172,11 +172,7 @@ class GrafoWidget(QGraphicsView):
 
         super().mousePressEvent(event)
 
-    def menu_alterar_rotulo(self, vertice):
-        novo_rotulo, ok = QInputDialog.getText(self, "Renomear Nó", "Digite o novo rótulo:")
-        if ok and novo_rotulo:
-            vertice.alterar_rotulo(novo_rotulo)
-            vertice.update()
+
 
     def menu_contexto_vertice(self, vertice, pos):
         """Exibe o menu de contexto para vertices."""
@@ -188,12 +184,31 @@ class GrafoWidget(QGraphicsView):
 
         acao_renomear_vertice.triggered.connect(lambda: self.menu_alterar_rotulo(vertice))
         acao_adicionar_aresta.triggered.connect(lambda: print("Ainda não implementado"))
-        acao_remover_arestas.triggered.connect(lambda: print("Ainda não implementado"))
-        acao_remover_vertice.triggered.connect(lambda: print("Ainda não implementado"))
+        acao_remover_arestas.triggered.connect(lambda: self.menu_remover_arestas(vertice))
+        acao_remover_vertice.triggered.connect(lambda: self.menu_remover_vertice(vertice))
 
         menu_contexto_vertice.exec(pos)
-    
 
+    def menu_alterar_rotulo(self, vertice):
+        novo_rotulo, ok = QInputDialog.getText(self, "Renomear Nó", "Digite o novo rótulo:")
+        if ok and novo_rotulo:
+            vertice.alterar_rotulo(novo_rotulo)
+            vertice.update()
+
+    def menu_remover_vertice(self, vertice):
+        print(vertice.vertice_id)
+        index_vertice = list(self.vertices.keys())[list(self.vertices.values()).index(vertice)] # nao sei eu tambem nao sei
+        self.vertices.pop(index_vertice)
+        self.scene.removeItem(vertice)
+        print("selfa arestas: ", self.arestas)
+        for aresta in self.arestas.copy(): # precisa ser numa copia se nao so apaga a primeira aparicao do vertice
+            print(aresta.get_vertices())
+            if vertice.vertice_id in aresta.get_vertices():
+                self.arestas.remove(aresta)
+                self.scene.removeItem(aresta)
+    
+    def menu_remover_arestas():
+        pass
 
     def menu_contexto_padrao(self, pos):
         """Exibe o menu de contexto padrão."""
@@ -293,7 +308,6 @@ class GrafoWidget(QGraphicsView):
         return menor_caminho
     
     def desenhar_maior_rota(self):
-
         adjacencia = self.criar_dicionario_adjacencia()
         maior_caminho = encontrar_maior_rota(1, 6, adjacencia)
         if not maior_caminho:
