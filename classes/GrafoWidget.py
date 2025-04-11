@@ -144,8 +144,7 @@ class GrafoWidget(QGraphicsView):
         pos = self.mapToScene(event.pos())
         itens = self.scene.items(pos)
 
-        # Se o clique for do botão direito fora de um vertice, nao faz nada, só chama o menu de contexto padrao
-        # Se o clique for em um vertice chama o menu de contexto para vertices
+        # Se o clique for do botão direito
         if event.button() == Qt.MouseButton.RightButton:
             for item in itens:
                 if isinstance(item, GrafoVertices):
@@ -154,7 +153,16 @@ class GrafoWidget(QGraphicsView):
             self.menu_contexto_padrao(event.globalPosition().toPoint())
             return
 
+        # Se o clique for do botão esquerdo e estamos criando uma aresta
+        # Serve pro adicionar aresta do menu de contexto
+        if self.comeco_aresta:
+            for item in itens:
+                if isinstance(item, GrafoVertices) and item != self.comeco_aresta:
+                    print(f"Criando aresta entre {self.comeco_aresta.vertice_id} e {item.vertice_id}")
+                    self.adicionar_aresta(self.comeco_aresta, item)
+                    self.comeco_aresta = None  # Reseta o vértice inicial
 
+        # Comportamento padrão para outros cliques
         for item in itens:
             if isinstance(item, GrafoVertices):
                 item.fixo = True
@@ -175,7 +183,6 @@ class GrafoWidget(QGraphicsView):
 
 
     def menu_contexto_vertice(self, vertice, pos):
-        """Exibe o menu de contexto para vertices."""
         menu_contexto_vertice = QMenu()
         acao_renomear_vertice = menu_contexto_vertice.addAction("Renomear nó")
         acao_adicionar_aresta = menu_contexto_vertice.addAction("Adicionar aresta")
@@ -183,7 +190,7 @@ class GrafoWidget(QGraphicsView):
         acao_remover_vertice = menu_contexto_vertice.addAction("Remover nó")
 
         acao_renomear_vertice.triggered.connect(lambda: self.menu_alterar_rotulo(vertice))
-        acao_adicionar_aresta.triggered.connect(lambda: self.menu_adicionar_arestas(vertice))
+        acao_adicionar_aresta.triggered.connect(lambda: self.menu_adicionar_aresta(vertice))
         acao_remover_arestas.triggered.connect(lambda: self.menu_remover_arestas(vertice))
         acao_remover_vertice.triggered.connect(lambda: self.menu_remover_vertice(vertice))
 
@@ -211,8 +218,9 @@ class GrafoWidget(QGraphicsView):
                 self.arestas.remove(aresta)
                 self.scene.removeItem(aresta)
 
-    def menu_adicionar_arestas(self, vertice):
-        self.adicionar_aresta(vertice, )
+    def menu_adicionar_aresta(self, vertice):
+        print(f"Vértice inicial selecionado: {vertice.vertice_id}")
+        self.comeco_aresta = vertice  # Armazena o vértice inicial para a aresta, e espera o proximo clique
 
     def menu_contexto_padrao(self, pos):
         """Exibe o menu de contexto padrão."""
