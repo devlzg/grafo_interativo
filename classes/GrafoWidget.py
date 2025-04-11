@@ -183,7 +183,7 @@ class GrafoWidget(QGraphicsView):
         acao_remover_vertice = menu_contexto_vertice.addAction("Remover nó")
 
         acao_renomear_vertice.triggered.connect(lambda: self.menu_alterar_rotulo(vertice))
-        acao_adicionar_aresta.triggered.connect(lambda: print("Ainda não implementado"))
+        acao_adicionar_aresta.triggered.connect(lambda: self.menu_adicionar_arestas(vertice))
         acao_remover_arestas.triggered.connect(lambda: self.menu_remover_arestas(vertice))
         acao_remover_vertice.triggered.connect(lambda: self.menu_remover_vertice(vertice))
 
@@ -197,18 +197,22 @@ class GrafoWidget(QGraphicsView):
 
     def menu_remover_vertice(self, vertice):
         print(vertice.vertice_id)
+        # pega a key usando o value
         index_vertice = list(self.vertices.keys())[list(self.vertices.values()).index(vertice)] # nao sei eu tambem nao sei
         self.vertices.pop(index_vertice)
         self.scene.removeItem(vertice)
-        print("selfa arestas: ", self.arestas)
+        print("self arestas: ", self.arestas)
+        self.menu_remover_arestas(vertice)
+    
+    def menu_remover_arestas(self, vertice):
         for aresta in self.arestas.copy(): # precisa ser numa copia se nao so apaga a primeira aparicao do vertice
             print(aresta.get_vertices())
             if vertice.vertice_id in aresta.get_vertices():
                 self.arestas.remove(aresta)
                 self.scene.removeItem(aresta)
-    
-    def menu_remover_arestas():
-        pass
+
+    def menu_adicionar_arestas(self, vertice):
+        self.adicionar_aresta(vertice, )
 
     def menu_contexto_padrao(self, pos):
         """Exibe o menu de contexto padrão."""
